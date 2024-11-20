@@ -1,0 +1,48 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id              String            @id @default(cuid())
+  username        String            @unique
+  name            String?
+  Stats           Stats?
+  MissionProgress MissionProgress[]
+}
+
+model Stats {
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  level  Int    @default(1)
+  gold   Int
+
+  @@unique([userId])
+}
+
+model Mission {
+  id                String            @id @default(cuid())
+  name              String
+  description       String
+  requiredLevel     Int               @default(1)
+  reward            Int
+  secondsToComplete Int
+  missionProgress   MissionProgress[]
+  isActive          Boolean           @default(false)
+}
+
+model MissionProgress {
+  id          String    @id @default(cuid())
+  missionId   String
+  mission     Mission   @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  completed   Boolean   @default(false)
+  startedAt   DateTime
+  completedAt DateTime?
+}
