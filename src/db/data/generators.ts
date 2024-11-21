@@ -36,3 +36,17 @@ export function createQuestProgress(
     ...overRides,
   };
 }
+
+export function createShip(
+  overRides: Partial<Prisma.ShipCreateInput> = {}
+): Prisma.ShipCreateInput {
+  return {
+    attack: faker.number.int({ min: 1, max: 100 }),
+    capacity: faker.number.int({ min: 1, max: 100 }),
+    name: faker.lorem.words(2),
+    cost: faker.number.int({ min: 1, max: 100 }),
+    description: faker.lorem.sentence(),
+    level: faker.number.int({ min: 1, max: 100 }),
+    ...overRides,
+  };
+}

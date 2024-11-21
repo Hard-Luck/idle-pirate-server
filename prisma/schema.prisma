@@ -20,7 +20,7 @@ model User {
 
 model Stats {
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   level  Int    @default(1)
   gold   Int    @default(0)
 
@@ -50,7 +50,7 @@ model QuestProgress {
   questId         String
   quest           Quest     @relation(fields: [questId], references: [id], onDelete: Cascade)
   userId          String
-  user            User      @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model QuestStage {
@@ -68,7 +68,7 @@ model QuestStageOption {
   description  String
   scores       Int
   questStageId String
-  questStage   QuestStage @relation(fields: [questStageId], references: [id])
+  questStage   QuestStage @relation(fields: [questStageId], references: [id], onDelete: Cascade)
 }
 
 model Ship {
@@ -86,7 +86,7 @@ model Ship {
 model UserShip {
   id     String @id @default(cuid())
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   shipId String
-  ship   Ship   @relation(fields: [shipId], references: [id])
+  ship   Ship   @relation(fields: [shipId], references: [id], onDelete: Cascade)
 }
