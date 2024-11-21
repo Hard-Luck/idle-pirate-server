@@ -9,40 +9,84 @@ datasource db {
 }
 
 model User {
-  id              String            @id @default(cuid())
-  username        String            @unique
-  name            String?
-  Stats           Stats?
-  MissionProgress MissionProgress[]
+  id            String          @id @default(cuid())
+  username      String          @unique
+  name          String?
+  Stats         Stats?
+  QuestProgress QuestProgress[]
+  createdAt     DateTime        @default(now())
+  UserShip      UserShip[]
 }
 
 model Stats {
   userId String
   user   User   @relation(fields: [userId], references: [id])
   level  Int    @default(1)
-  gold   Int
+  gold   Int    @default(0)
 
   @@unique([userId])
 }
 
-model Mission {
-  id                String            @id @default(cuid())
-  name              String
-  description       String
-  requiredLevel     Int               @default(1)
-  reward            Int
-  secondsToComplete Int
-  missionProgress   MissionProgress[]
-  isActive          Boolean           @default(false)
+model Quest {
+  id             String          @id @default(cuid())
+  name           String
+  description    String
+  successText    String
+  requiredLevel  Int             @default(1)
+  reward         Int
+  difficulty     Int             @default(1)
+  isActive       Boolean         @default(false)
+  numberOfStages Int             @default(1)
+  QuestProgress  QuestProgress[]
+  QuestStage     QuestStage[]
 }
 
-model MissionProgress {
-  id          String    @id @default(cuid())
-  missionId   String
-  mission     Mission   @relation(fields: [missionId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  completed   Boolean   @default(false)
-  startedAt   DateTime
-  completedAt DateTime?
+model QuestProgress {
+  id              String    @id @default(cuid())
+  completed       Boolean   @default(false)
+  startedAt       DateTime  @default(now())
+  completedAt     DateTime?
+  stagesCompleted Int       @default(0)
+  questId         String
+  quest           Quest     @relation(fields: [questId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+model QuestStage {
+  id               String             @id @default(cuid())
+  stageNumber      Int
+  text             String
+  completed        Boolean            @default(false)
+  questId          String
+  quest            Quest              @relation(fields: [questId], references: [id], onDelete: Cascade)
+  QuestStageOption QuestStageOption[]
+}
+
+model QuestStageOption {
+  id           String     @id @default(cuid())
+  description  String
+  scores       Int
+  questStageId String
+  questStage   QuestStage @relation(fields: [questStageId], references: [id])
+}
+
+model Ship {
+  id          String     @id @default(cuid())
+  name        String
+  description String
+  cost        Int
+  level       Int
+  attack      Int
+  capacity    Int
+  isDefault   Boolean    @default(false)
+  UserShip    UserShip[]
+}
+
+model UserShip {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  shipId String
+  ship   Ship   @relation(fields: [shipId], references: [id])
 }
