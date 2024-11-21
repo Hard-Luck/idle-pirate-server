@@ -23,6 +23,12 @@ export default async function seed() {
           },
         },
       },
+      Stats: {
+        create: {
+          gold: 100,
+          level: 1,
+        },
+      },
     },
   });
   await db.quest.create({

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = "file:./db/dev.db"
 }
 
 model User {
@@ -19,10 +19,11 @@ model User {
 }
 
 model Stats {
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  level  Int    @default(1)
-  gold   Int    @default(0)
+  userId     String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level      Int    @default(1)
+  gold       Int    @default(0)
+  experience Int    @default(0)
 
   @@unique([userId])
 }

@@ -10,12 +10,11 @@ const config: Config =
         authToken: `${process.env.TURSO_AUTH_TOKEN}`,
       }
     : {
-        url: `file:prisma/dev.db`,
+        url: `file:prisma/db/dev.db`,
       };
 const libsql = createClient(config);
 
 const adapter = new PrismaLibSQL(libsql);
-const env = process.env.NODE_ENV;
 const options = { adapter };
 const db = new PrismaClient(options);
 
