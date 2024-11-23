@@ -17,22 +17,16 @@ export function createQuest(
   return {
     name: faker.lorem.words(3),
     description: faker.lorem.paragraph(),
-    reward: faker.number.int({ min: 1, max: 100 }),
-    successText: faker.lorem.sentence(),
-    ...overRides,
-  };
-}
-
-export function createQuestProgress(
-  userId: string,
-  questId: string,
-  overRides?: Partial<Prisma.QuestProgressCreateInput>
-): Prisma.QuestProgressCreateInput {
-  return {
-    completed: Math.random() > 0.5 ? true : false,
-    user: { connect: { id: userId } },
-    quest: { connect: { id: questId } },
-    startedAt: faker.date.recent(),
+    QuestRequirement: {
+      create: {},
+    },
+    QuestReward: {
+      create: {
+        gold: faker.number.int({ min: 1, max: 100 }),
+        rum: faker.number.int({ min: 1, max: 100 }),
+        experience: faker.number.int({ min: 1, max: 100 }),
+      },
+    },
     ...overRides,
   };
 }
@@ -46,7 +40,19 @@ export function createShip(
     name: faker.lorem.words(2),
     cost: faker.number.int({ min: 1, max: 100 }),
     description: faker.lorem.sentence(),
-    level: faker.number.int({ min: 1, max: 100 }),
+    maxGuns: faker.number.int({ min: 1, max: 100 }),
+    requiredLevel: faker.number.int({ min: 1, max: 100 }),
+    ...overRides,
+  };
+}
+
+export function createItem(
+  overRides: Partial<Prisma.ItemCreateInput> = {}
+): Prisma.ItemCreateInput {
+  return {
+    name: faker.lorem.words(2),
+    description: faker.lorem.sentence(),
+    type: faker.word.noun(),
     ...overRides,
   };
 }

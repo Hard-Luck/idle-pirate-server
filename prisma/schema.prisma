@@ -9,13 +9,12 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  username      String?         @unique
-  name          String?
-  Stats         Stats?
-  QuestProgress QuestProgress[]
-  createdAt     DateTime        @default(now())
-  UserShip      UserShip[]
+  id        String     @id @default(cuid())
+  username  String?    @unique
+  name      String?
+  Stats     Stats?
+  createdAt DateTime   @default(now())
+  UserShip  UserShip[]
 }
 
 model Stats {
@@ -23,65 +22,80 @@ model Stats {
   user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   level      Int    @default(1)
   gold       Int    @default(0)
+  rum        Int    @default(0)
   experience Int    @default(0)
 
   @@unique([userId])
 }
 
+model Item {
+  id                   String                 @id @default(cuid())
+  name                 String
+  description          String
+  value                Int                    @default(0)
+  type                 String
+  QuestRequirementItem QuestRequirementItem[]
+  QuestRewardItem      QuestRewardItem[]
+}
+
 model Quest {
-  id             String          @id @default(cuid())
-  name           String
-  description    String
-  successText    String
-  requiredLevel  Int             @default(1)
-  reward         Int
-  difficulty     Int             @default(1)
-  isActive       Boolean         @default(false)
-  numberOfStages Int             @default(1)
-  QuestProgress  QuestProgress[]
-  QuestStage     QuestStage[]
-}
-
-model QuestProgress {
-  id              String    @id @default(cuid())
-  completed       Boolean   @default(false)
-  startedAt       DateTime  @default(now())
-  completedAt     DateTime?
-  stagesCompleted Int       @default(0)
-  questId         String
-  quest           Quest     @relation(fields: [questId], references: [id], onDelete: Cascade)
-  userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model QuestStage {
   id               String             @id @default(cuid())
-  stageNumber      Int
-  text             String
-  completed        Boolean            @default(false)
-  questId          String
-  quest            Quest              @relation(fields: [questId], references: [id], onDelete: Cascade)
-  QuestStageOption QuestStageOption[]
+  name             String
+  description      String
+  lengthInSeconds  Int                @default(10)
+  QuestRequirement QuestRequirement[]
+  QuestReward      QuestReward[]
 }
 
-model QuestStageOption {
-  id           String     @id @default(cuid())
-  description  String
-  scores       Int
-  questStageId String
-  questStage   QuestStage @relation(fields: [questStageId], references: [id], onDelete: Cascade)
+model QuestReward {
+  id              String            @id @default(cuid())
+  questId         String
+  quest           Quest             @relation(fields: [questId], references: [id], onDelete: Cascade)
+  gold            Int               @default(0)
+  rum             Int               @default(0)
+  experience      Int               @default(0)
+  QuestRewardItem QuestRewardItem[]
+}
+
+model QuestRewardItem {
+  id            String      @id @default(cuid())
+  itemId        String
+  item          Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity      Int
+  questRewardId String
+  questReward   QuestReward @relation(fields: [questRewardId], references: [id])
+}
+
+model QuestRequirement {
+  id                   String                 @id @default(cuid())
+  questId              String
+  quest                Quest                  @relation(fields: [questId], references: [id], onDelete: Cascade)
+  level                Int                    @default(0)
+  gold                 Int                    @default(0)
+  rum                  Int                    @default(0)
+  QuestRequirementItem QuestRequirementItem[]
+}
+
+model QuestRequirementItem {
+  id                 String           @id @default(cuid())
+  itemId             String
+  item               Item             @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity           Int
+  questRequirementId String
+  questRequirement   QuestRequirement @relation(fields: [questRequirementId], references: [id])
 }
 
 model Ship {
-  id          String     @id @default(cuid())
-  name        String
-  description String
-  cost        Int
-  level       Int
-  attack      Int
-  capacity    Int
-  isDefault   Boolean    @default(false)
-  UserShip    UserShip[]
+  id            String     @id @default(cuid())
+  name          String
+  description   String
+  cost          Int
+  requiredLevel Int
+  attack        Int
+  capacity      Int
+  isDefault     Boolean    @default(false)
+  maxGuns       Int
+  UserShip      UserShip[]
 }
 
 model UserShip {
@@ -90,4 +104,6 @@ model UserShip {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   shipId String
   ship   Ship   @relation(fields: [shipId], references: [id], onDelete: Cascade)
+  guns   Int    @default(0)
+  health Int    @default(100)
 }

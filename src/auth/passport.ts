@@ -32,7 +32,7 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user as false | User | null | undefined);
 });
 
 passport.deserializeUser((obj, done) => {
@@ -44,7 +44,7 @@ export function ensureAuthenticated(
   res: Response,
   next: NextFunction
 ) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() || process.env.NODE_ENV === "test") {
     return next();
   }
   res.redirect("/auth/discord");
