@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import * as generators from "./generators";
+import generators from "./generators";
 import { createUser } from "../create-mocks";
 import { faker } from "@faker-js/faker";
 
@@ -35,7 +35,12 @@ export class SeedDataFactory {
     };
   }
 
+  resetGenerators() {
+    generators.resetAllCounters();
+  }
+
   addUsers() {
+    this.resetGenerators();
     const userId = this.generators.generateUserId();
     const user = createUser({
       id: userId,
