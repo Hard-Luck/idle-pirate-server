@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import generators from "./generators";
+import Generators from "./generators";
 import { createUser } from "../create-mocks";
 import { faker } from "@faker-js/faker";
 
@@ -17,10 +17,10 @@ export type SeedData = {
 };
 
 export class SeedDataFactory {
-  private generators: typeof generators;
+  private generators: Generators;
   private data: SeedData;
   constructor() {
-    this.generators = generators;
+    this.generators = new Generators();
     this.data = {
       users: [],
       stats: [],
@@ -36,7 +36,7 @@ export class SeedDataFactory {
   }
 
   resetGenerators() {
-    generators.resetAllCounters();
+    this.generators.resetAllCounters();
   }
 
   addUsers() {
@@ -64,7 +64,7 @@ export class SeedDataFactory {
   }
   addItems() {
     for (let i = 0; i < 10; i++) {
-      const itemId = generators.generateItemId();
+      const itemId = this.generators.generateItemId();
       const item = {
         id: itemId,
         name: faker.commerce.productName(),

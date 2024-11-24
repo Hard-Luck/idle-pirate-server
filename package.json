@@ -33,7 +33,7 @@
   "scripts": {
     "test": "jest",
     "seed": "ts-node ./src/db/seed.ts",
-    "dev": "tsc && node ./dist/listen.js"
+    "dev": "tsc && NODE_ENV=development  node ./dist/src/listen.js"
   },
   "keywords": [],
   "author": "",

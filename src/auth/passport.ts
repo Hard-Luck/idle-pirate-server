@@ -4,6 +4,8 @@ import { User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { findOrCreateUser } from "../models/users";
+import session from "express-session";
+import app from "../app";
 
 dotenv.config();
 
@@ -49,3 +51,13 @@ export function ensureAuthenticated(
   }
   res.redirect("/auth/discord");
 }
+
+export const authMiddleware = [
+  session({
+    secret: process.env.SESSION_SECRET || "default_secret",
+    resave: false,
+    saveUninitialized: false,
+  }),
+  passport.initialize(),
+  passport.session(),
+];

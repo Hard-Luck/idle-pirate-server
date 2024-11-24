@@ -1,46 +1,27 @@
-import express, { Request, Response, NextFunction } from "express";
-import passport from "passport";
-import session from "express-session";
+import express from "express";
 import "./auth/passport";
-import { ensureAuthenticated } from "./auth/passport";
+import { authMiddleware, ensureAuthenticated } from "./auth/passport";
+import apiRouter from "./routers/api";
+import authRouter from "./auth/router";
+import errorMiddleware from "./errors/middleware";
+import devMiddleware from "./logging/dev.middleware";
 
 const app = express();
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "default_secret",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+app.use(authMiddleware);
 
-app.use(passport.initialize());
-app.use(passport.session());
+if (process.env.NODE_ENV === "development") {
+  app.use(devMiddleware);
+}
+app.use("/auth", authRouter);
 
-app.get("/auth/discord", passport.authenticate("discord"));
-
-app.get(
-  "/auth/discord/callback",
-  passport.authenticate("discord", { failureRedirect: "/" }),
-  (req: Request, res: Response) => {
-    res.redirect("/");
-  }
-);
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
 });
 
-app.use(ensureAuthenticated);
+app.use("/api", apiRouter);
 
-app.get("/protected", (req: Request, res: Response) => {
-  res.send("Protected route");
-});
-
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error("Error occurred:", err);
-  res.status(500).send("An error occurred");
-});
+app.use(errorMiddleware);
 
 export default app;

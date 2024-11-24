@@ -5,6 +5,10 @@ export async function findOrCreateUser(id: string) {
   if (user) {
     return user;
   } else {
-    return await db.user.create({ data: { id } });
+    return db.user.create({ data: { id } });
   }
+}
+
+export async function findUser(id: string) {
+  return db.user.findFirst({ where: { id } });
 }

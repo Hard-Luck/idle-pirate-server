@@ -42,4 +42,4 @@ export class Generators {
 }
 
 // Export a singleton instance
-export default new Generators();
+export default Generators;
